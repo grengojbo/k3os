@@ -1,5 +1,5 @@
 ### BASE ###
-FROM alpine:3.12 as base
+FROM alpine:3.13 as base
 ARG ARCH
 RUN apk --no-cache add \
     bash \
@@ -47,6 +47,7 @@ RUN apk --no-cache add \
     openssh-client \
     openssh-server \
     parted \
+    cloud-utils \
     cloud-utils-growpart \
     procps \
     qemu-guest-agent \
