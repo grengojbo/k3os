@@ -47,7 +47,7 @@ RUN apk --no-cache add \
     openssh-client \
     openssh-server \
     parted \
-    cloud-utils \
+    cloud-utils-growpart \
     procps \
     qemu-guest-agent \
     rng-tools \
