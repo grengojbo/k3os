@@ -1,5 +1,6 @@
 ### BASE ###
-FROM alpine:3.13 as base
+# FROM alpine:3.13 as base
+FROM alpine:edge as base
 ARG ARCH
 RUN apk --no-cache add \
     bash \
@@ -27,7 +28,7 @@ RUN apk --no-cache add \
     iproute2 \
     iptables \
     irqbalance \
-    iscsi-scst \
+    # iscsi-scst \
     jq \
     kbd-bkeymaps \
     lm-sensors \
@@ -35,20 +36,26 @@ RUN apk --no-cache add \
     lsscsi \
     lvm2 \
     lvm2-extra \
-    mdadm \
-    mdadm-misc \
-    mdadm-udev \
+    # mdadm \
+    # mdadm-misc \
+    # mdadm-udev \
     multipath-tools \
     ncurses \
     ncurses-terminfo \
     nfs-utils \
-    open-iscsi \
+    # open-iscsi \
     openrc \
     openssh-client \
     openssh-server \
     parted \
     cloud-utils \
     cloud-utils-growpart \
+    libselinux \
+    libselinux-utils \
+    # only edge is not 3.13
+    policycoreutils \
+    vault \
+    vault-openrc \
     procps \
     qemu-guest-agent \
     rng-tools \
@@ -61,7 +68,7 @@ RUN apk --no-cache add \
     vim \
     neovim \
     wireguard-tools \
-    wpa_supplicant \
+    # wpa_supplicant \
     xfsprogs \
     xz \
  && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
