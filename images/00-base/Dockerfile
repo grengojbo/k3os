@@ -1,6 +1,6 @@
 ### BASE ###
-# FROM alpine:3.13 as base
-FROM alpine:edge as base
+FROM alpine:3.13 as base
+# FROM alpine:edge as base
 ARG ARCH
 RUN apk --no-cache add \
     bash \
@@ -53,9 +53,9 @@ RUN apk --no-cache add \
     libselinux \
     libselinux-utils \
     # only edge is not 3.13
-    policycoreutils \
-    vault \
-    vault-openrc \
+    #policycoreutils \
+    # vault \
+    # vault-openrc \
     procps \
     qemu-guest-agent \
     rng-tools \
@@ -66,7 +66,7 @@ RUN apk --no-cache add \
     tzdata \
     util-linux \
     vim \
-    neovim \
+    # neovim \
     wireguard-tools \
     # wpa_supplicant \
     xfsprogs \

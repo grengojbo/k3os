@@ -4,6 +4,14 @@
 
 # k3OS
 
++ cd ..
+++ docker run --net=host --privileged --rm -itd rancher/k3os-iso:dev
++ ID=4f4b02cc4df5bb934020eae9f528088ff9695c67fc474c832b8834958f5d62f4
++ docker attach 4f4b02cc4df5bb934020eae9f528088ff9695c67fc474c832b8834958f5d62f4
+SeaBIOS (version rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org)
+
+
+
 k3OS is a Linux distribution designed to remove as much OS maintenance
 as possible in a Kubernetes cluster. It is specifically designed to only
 have what is needed to run [k3s](https://github.com/rancher/k3s). Additionally
