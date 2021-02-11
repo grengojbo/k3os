@@ -12,11 +12,14 @@ else
     QEMU_SYSTEM="qemu-system-$ARCH"
 fi
 
-if [ ! -d $STATE_DIR ]; then
-    mkdir -p $STATE_DIR
+if [ ! -d ${STATE_DIR} ]; then
+    mkdir -p ${STATE_DIR}
 fi
 if [ ! -e $STATE_DIR/${DISK_NAME:=vda.img} ]; then
-    qemu-img create -f qcow2 $STATE_DIR/${DISK_NAME} ${DISK_SIZE:=8g}
+    echo "Create Disk: ${STATE_DIR}/${DISK_NAME}"
+    qemu-img create -f qcow2 ${STATE_DIR}/${DISK_NAME} ${DISK_SIZE:=8g}
+else
+    echo "Usage Disk: ${STATE_DIR}/${DISK_NAME}"
 fi
 
 # Example Usage
