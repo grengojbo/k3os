@@ -1,0 +1,25 @@
+version: "3.5"
+services:
+  app:
+    container_name: k3os-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile.app
+    network_mode: host
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    # environment:
+    #   GOPATH: /usr/local/go
+    volumes:
+      - ./cmd/:/go/src/github.com/rancher/k3os/cmd/
+      - ./pkg/:/go/src/github.com/rancher/k3os/pkg/
+      # - $(PWD)/main.go:$GOPATH/src/github.com/rancher/k3os/
+      - ./vendor/:/go/src/github.com/rancher/k3os/vendor/
+      # - ./vendor/:/app/src/github.com/rancher/k3os/vendor/
+    # command: ["k3os", "help"]
+    # command: ["bash -c "while true; do echo hello; sleep 2; done"]
+    # tty: true
+    # command: bash
+    command: tail -f /dev/null

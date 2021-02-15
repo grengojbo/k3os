@@ -1,10 +1,3 @@
-ARG REPO
-ARG TAG
-ARG ENABLE_VAULT
-ARG CUSTOM_PACKAGES
-FROM ${REPO}/k3os-base:${TAG} AS base
-RUN apk --no-cache add \
-    grub-bios \
     cloud-utils \
     cloud-utils-growpart
 RUN if [ "$CLOUD_PROVIDER" == "vmware" ]; then \
