@@ -23,6 +23,7 @@ RUN apk --no-cache add \
     grub-efi \
     haveged \
     htop \
+    mc \
     hvtools \
     iproute2 \
     iptables \
