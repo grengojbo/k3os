@@ -153,14 +153,12 @@ install_grub()
 {
     if [ "$K3OS_INSTALL_DEBUG" ]; then
         GRUB_DEBUG="k3os.debug"
-    else
-        GRUB_DEBUG="ipv6.disable=1 swapaccount=1"
     fi
 
     mkdir -p ${TARGET}/boot/grub
     cat > ${TARGET}/boot/grub/grub.cfg << EOF
 set default=0
-set timeout=5 
+set timeout=10
 
 set gfxmode=auto
 set gfxpayload=keep
