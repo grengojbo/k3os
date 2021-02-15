@@ -41,6 +41,7 @@ RUN apk --no-cache add \
     procps \
     rng-tools \
     rsync \
+    shadow-uidmap \
     strace \
     sudo \
     tar \
