@@ -56,4 +56,5 @@ RUN if [ ! -z "${CUSTOM_PACKAGES}" ]; then \
         nfs-utils \
         wpa_supplicant \
         xfsprogs \
+        smartmontools \
     ;fi
