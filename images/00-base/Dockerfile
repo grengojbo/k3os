@@ -1,5 +1,6 @@
 ### BASE ###
-FROM alpine:3.12 as base
+FROM alpine:3.13 as base
+# FROM alpine:edge as base
 ARG ARCH
 RUN apk --no-cache add \
     bash \
@@ -26,28 +27,18 @@ RUN apk --no-cache add \
     iproute2 \
     iptables \
     irqbalance \
-    iscsi-scst \
     jq \
     kbd-bkeymaps \
     lm-sensors \
     logrotate \
-    lsscsi \
-    lvm2 \
-    lvm2-extra \
-    mdadm \
-    mdadm-misc \
-    mdadm-udev \
     multipath-tools \
     ncurses \
     ncurses-terminfo \
-    nfs-utils \
-    open-iscsi \
     openrc \
     openssh-client \
     openssh-server \
     parted \
     procps \
-    qemu-guest-agent \
     rng-tools \
     rsync \
     strace \
@@ -57,10 +48,7 @@ RUN apk --no-cache add \
     util-linux \
     vim \
     wireguard-tools \
-    wpa_supplicant \
-    xfsprogs \
     xz \
- && mv -vf /etc/conf.d/qemu-guest-agent /etc/conf.d/qemu-guest-agent.orig \
  && mv -vf /etc/conf.d/rngd             /etc/conf.d/rngd.orig \
  && mv -vf /etc/conf.d/udev-settle      /etc/conf.d/udev-settle.orig \
 # replicate the default "no idea, friend" behavior of virt-what
