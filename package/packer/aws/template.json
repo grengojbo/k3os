@@ -2,7 +2,7 @@
   "builders": [
     {
       "access_key": "{{user `aws_access_key`}}",
-      "ami_name": "rancher-k3os-{{user `k3os_version`}}-amd64-{{isotime `200601020304`}}",
+      "ami_name": "k3os-{{user `k3os_version`}}-amd64-{{isotime `200601020304`}}",
       "instance_type": "t3.small",
       "region": "{{user `region`}}",
       "secret_key": "{{user `aws_secret_key`}}",
@@ -55,9 +55,9 @@
   "variables": {
     "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
     "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
-    "iso_url": "https://github.com/rancher/k3os/releases/download/v0.11.0/k3os-vm-amd64.iso",
-    "k3os_version": "v0.11.0",
-    "region": "us-east-1"
+    "iso_url": "https://github.com/grengojbo/k3os/releases/download/v0.19.5-aws.2/k3os-aws-amd64.iso",
+    "k3os_version": "v0.19.5-aws.2",
+    "region": "eu-central-1"
   }
 }
 
