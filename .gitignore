@@ -14,3 +14,5 @@
 packer_cache/
 *.box
 .env
+tmp/k3os-master1-config.yaml
+tmp/k3os-worker-config.yaml

@@ -28,6 +28,7 @@ fi
 
 ## silent install
 # DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda
+# DISK_NAME=test.img ./scripts/run-qemu k3os.install.config_url=/usr/share/rancher/k3os/scripts/k3os-master-config.yaml k3os.password=rancher k3os.install.power_off=true k3os.mode=install k3os.install.silent k3os.install.device=/dev/vda
 
 ## run installed vm
 # DISK_NAME=test.img ./scripts/run-qemu k3os.password=rancher
@@ -46,6 +47,6 @@ exec $QEMU_SYSTEM \
     -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
     -kernel $(dirname $0)/../dist/artifacts/k3os-vmlinuz-$ARCH \
     -initrd $(dirname $0)/../dist/artifacts/k3os-initrd-$ARCH \
-    -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-$ARCH.iso \
+    -drive if=ide,media=cdrom,file=$(dirname $0)/../dist/artifacts/k3os-vm-$ARCH.iso \
     -drive if=virtio,media=disk,file=$STATE_DIR/${DISK_NAME} \
     -append "console=${CONSOLE:=ttyS0} loglevel=${LOGLEVEL:=4} printk.devkmsg=${PRINTK_DEVKMSG:=on} $*"

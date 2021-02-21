@@ -4,6 +4,13 @@ ssh_authorized_keys:
 write_files:
 - encoding: ""
   content: |-
+    rc_logger="YES"
+    #rc_log_path="/var/log/rc.log"
+  owner: root
+  path: /etc/rc.conf
+  permissions: '0644'
+- encoding: ""
+  content: |-
     [General]
     NetworkInterfaceBlacklist=veth
     PreferredTechnologies=ethernet
@@ -63,16 +70,21 @@ write_files:
 #  - mkdir -p /var/lib/longhorn
 # /Block end
 #
-# init_cmd:
-# - "echo hello, init command"
+init_cmd:
+- "echo hello, init command"
 boot_cmd:
 - "echo hello, boot command"
-- "growpart /dev/sda 1"
-- "resize2fs /dev/sda1"
+#- /usr/bin/growpart /dev/sda 1
+#- /usr/sbin/resize2fs /dev/sda1
+#- mkdir -p /var/lib/longhorn
+# - "resize2fs /dev/sda1"
 run_cmd:
 - "echo hello, run command"
-- "rc-service iscsid stop"
-- "rc-service wpa_supplicant stop"
+#- ip link set eth1 mtu 1400
+# - sysctl -w 'kernel.printk=4 4 1 7'
+# - sysctl -w 'kernel.kptr_restrict=1'
+# - sysctl -w 'net.core.somaxconn=65535'
+# - sysctl -w 'vm.panic_on_oom=1'
 k3os:
   # data_sources:
   # - aws
@@ -80,9 +92,12 @@ k3os:
   # modules:
   # - kvm
   # - nvme
+  # sysctl -q kernel.printk net.core.somaxconn vm.panic_on_oom kernel.kptr_restrict
   # sysctl:
-  #   kernel.printk: "4 4 1 7"
-  #   kernel.kptr_restrict: "1"
+  #   # kernel.printk: "4 4 1 7"
+  #   # kernel.kptr_restrict: "1"
+  #   net.core.somaxconn: "65535"
+  #   vm.panic_on_oom: "1"
   # dns_nameservers:
   # - 8.8.8.8
   # - 1.1.1.1
@@ -96,18 +111,20 @@ k3os:
   #   passphrase: somethingelse
   # password: rancher
   # server_url: https://someserver:6443
-  # token: TOKEN_VALUE
-  labels:
-    region: hz-server-2
-    # somekey: somevalue
+  # token: TOKEN
+  # labels:
+  #   somekey: somevalue
   k3s_args:
   - server
   #- "--disable-agent"
-  # - "--cluster-domain=k3s.dus.waigant.io"
-  # - "--tls-san *.k3s.dus.waigant.io"
-  # - "--disable=traefik"
+  # - "--cluster-domain=k3s.bbox.kiev.ua"
+  # - "--tls-san *.k3s.bbox.kiev.ua"
+  - "--tls-san=$(hostname -i)"
+  - "--tls-san=$(hostname -f)"
+  - "--disable=traefik"
+  # - "--disable=servicelb"
   - "--secrets-encryption"
-  - "--node-name=$(k3os-master.hz.iwis.io)"
+  - "--node-name=$(hostname -f)"
   # - "--flannel-backend=none"
   # - "--datastore-endpoint=mysql://root:root@tcp(localhost:3306)/k3s"
   # environment:

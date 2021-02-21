@@ -11,6 +11,9 @@
 SeaBIOS (version rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org)
 
 
+F0217 19:46:18.528665    6070 server.go:186] unknown 'kubernetes.io' or 'k8s.io' labels specified with --node-labels: [node-role.kubernetes.io/worker]
+--node-labels in the 'kubernetes.io' namespace must begin with an allowed prefix (kubelet.kubernetes.io, node.kubernetes.io) or be in the specifically allowed set (beta.kubernetes.io/arch, beta.kubernetes.io/instance-type, beta.kubernetes.io/os, failure-domain.beta.kubernetes.io/region, failure-domain.beta.kubernetes.io/zone, kubernetes.io/arch, kubernetes.io/hostname, kubernetes.io/os, node.kubernetes.io/instance-type, topology.kubernetes.io/region, topology.kubernetes.io/zone)
+
 
 k3OS is a Linux distribution designed to remove as much OS maintenance
 as possible in a Kubernetes cluster. It is specifically designed to only

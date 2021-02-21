@@ -298,13 +298,19 @@ func AskConfigURL(cfg *config.CloudConfig) error {
 		return nil
 	}
 
-	str, err := questions.Prompt("cloud-init file location [default] (file path or http URL): ", "")
+	str, err := questions.Prompt("cloud-init file location [default,master] (file path or http URL): ", "")
 	if err != nil {
 		return err
 	}
 
 	if str == "default" {
 		str = "/usr/share/rancher/k3os/scripts/config.yaml"
+	}
+	if str == "master" {
+		str = "/usr/share/rancher/k3os/scripts/k3os-master-config.yaml"
+	}
+	if str == "worker" {
+		str = "/usr/share/rancher/k3os/scripts/k3os-worker-config.yaml"
 	}
 
 	cfg.K3OS.Install.ConfigURL = str
