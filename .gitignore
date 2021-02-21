@@ -13,3 +13,5 @@
 .vagrant/
 packer_cache/
 *.box
+.env
+tmp/k3os-*-config.yaml
