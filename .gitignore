@@ -16,3 +16,4 @@ packer_cache/
 .env
 tmp/k3os-master1-config.yaml
 tmp/k3os-worker-config.yaml
+tmp/k3os-*-config.yaml
