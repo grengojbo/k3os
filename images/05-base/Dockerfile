@@ -30,7 +30,7 @@ RUN if [ -z "$ENABLE_SELINUX" ]; then \
         libselinux \
         libselinux-utils \
         # only edge is not 3.13
-        apk --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing add policycoreutils \
+        && apk --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing add policycoreutils \
         #policycoreutils \
     ;fi
 # RUN if [ -z "$DISABLE_ISCSI" ]; then \
