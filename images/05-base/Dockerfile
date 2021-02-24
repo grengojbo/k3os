@@ -6,9 +6,9 @@ FROM ${REPO}/k3os-base:${TAG} AS base
 RUN apk --no-cache add \
     grub-bios \
     cloud-utils \
-    aws-cli \
-    aws-cli-bash-completion \
     cloud-utils-growpart
+    # aws-cli \
+    # aws-cli-bash-completion \
 # RUN if [ "$CLOUD_PROVIDER" == "vmware" ]; then \
 #         apk --no-cache add \
 #         open-vm-tools \

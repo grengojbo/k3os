@@ -49,7 +49,7 @@ info:   ## for developer information
 	@echo "---------------------------------------------------------------------"
 	@env
 
-run-live: # Run live cd boot
+run-live: ## Run live cd boot
 	@./scripts/run-qemu k3os.mode=live
 
 .dapper:

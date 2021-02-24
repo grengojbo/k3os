@@ -9,5 +9,14 @@ mkdir -p build
 
 bash -x ./scripts/build
 
+# echo "RUN: docker run --net=host --privileged --rm -itd $REPO/k3os-iso:$TAG"
+# docker run --net=host --privileged --rm -it rancher/k3os-iso:dev
+# rancher/k3os-base
+# rancher/k3os-gobuild:dev
+# rancher/k3os-k3s:dev
+# rancher/k3os-kernel-stage1
+# rancher/k3os-progs
+# rancher/k3os-rootfs:dev
+
 ID=$(docker run --net=host --privileged --rm -itd $REPO/k3os-iso:$TAG)
 docker attach $ID || docker kill $ID
