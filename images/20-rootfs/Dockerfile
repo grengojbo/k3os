@@ -6,6 +6,10 @@ ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-progs:${TAG} as progs
 
+#ARG REPO
+#ARG TAG
+#FROM ${REPO}/k3os-awscli:${TAG} as awscli
+
 ARG REPO
 ARG TAG
 FROM ${REPO}/k3os-k3s:${TAG} as k3s
@@ -19,6 +23,7 @@ COPY --from=base /lib /usr/src/image/lib/
 COPY --from=base /sbin /usr/src/image/sbin/
 COPY --from=base /etc /usr/src/image/etc/
 COPY --from=base /usr /usr/src/image/usr/
+#COPY --from=awscli /output/usr/lib/aws-cli  /usr/src/image/lib/aws-cli/
 
 # Fix up more stuff to move everything to /usr
 RUN cd /usr/src/image && \
@@ -94,6 +99,9 @@ RUN ln -s /k3os/system/k3s/current/k3s /usr/src/image/sbin/k3s
 RUN ln -s k3s /usr/src/image/sbin/kubectl
 RUN ln -s k3s /usr/src/image/sbin/crictl
 RUN ln -s k3s /usr/src/image/sbin/ctr
+
+# RUN ln -s /usr/bin/aws /usr/src/image/lib/aws-cli/aws
+# RUN ln -s /usr/bin/aws_completer /usr/src/image/lib/aws-cli/aws_completer
 
 COPY install.sh /usr/src/image/libexec/k3os/install
 RUN sed -i -e "s/%VERSION%/${VERSION}/g" -e "s/%ARCH%/${ARCH}/g" /usr/src/image/lib/os-release
