@@ -21,7 +21,8 @@ ifneq (,$(wildcard .env))
 	# export
 endif
 
-TARGETS := $(shell ls scripts)
+# TARGETS := $(shell ls scripts)
+TARGETS := $(shell ls scripts | grep -vE 'clean|dev|run|help|release*|build-moby|run-moby')
 
 #help: .checker
 help:
@@ -30,6 +31,7 @@ help:
 	@grep -h -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo "----------------------------------------------------------------------------"
 	@#echo "GOPATH: ${GOPATH}"
+	@./scripts/help
 	@echo " "
 
 .checker:
@@ -49,8 +51,31 @@ info:   ## for developer information
 	@echo "---------------------------------------------------------------------"
 	@env
 
+run-dev: ## Run QEMU 
+	@echo "exit from QEMU Ctrl+a c"
+	@echo "(qemu) q"
+	@echo " "
+	@echo "Password: rancher"
+	@echo " "
+	@./scripts/run-qemu k3os.password=rancher k3os.debug=true
+
 run-live: ## Run live cd boot
-	@./scripts/run-qemu k3os.mode=live
+	@echo "exit from QEMU Ctrl+a c"
+	@echo "(qemu) q"
+	@echo " "
+	@echo "sudo K3OS_INSTALL_NO_REBOOT=true K3OS_INSTALL_DISABLE_IPV6=true k3os install"
+	@./scripts/run-qemu k3os.mode=live k3os.debug=true
+
+packer-proxmox: ## Build Proxmox
+	@ echo "Start build proxmox server: ${pve_server}"
+	@cd ./package/packer/proxmox/ \
+		&& PACKER_LOG=1 packer build -debug -on-error=ask -var-file=vars.json template.json
+
+dev: ## For development
+	@./scripts/dev
+
+clean: ## Clean docker images
+	@./scripts/clean
 
 .dapper:
 	@echo Downloading dapper
@@ -65,4 +90,5 @@ $(TARGETS): .dapper
 
 .DEFAULT_GOAL := default
 
-.PHONY: help info run-live $(TARGETS)
+.PHONY: $(TARGETS)
+# .PHONY: help info run-live packer-proxmox $(TARGETS)

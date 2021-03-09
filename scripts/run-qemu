@@ -18,8 +18,10 @@ fi
 if [ ! -e $STATE_DIR/${DISK_NAME:=vda.img} ]; then
     echo "Create Disk: ${STATE_DIR}/${DISK_NAME}"
     qemu-img create -f qcow2 ${STATE_DIR}/${DISK_NAME} ${DISK_SIZE:=8g}
+    sleep 5
 else
     echo "Usage Disk: ${STATE_DIR}/${DISK_NAME}"
+    sleep 5
 fi
 
 # Example Usage

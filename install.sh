@@ -13,6 +13,7 @@ get_url()
 {
     FROM=$1
     TO=$2
+    echo "[RUN] get_url from ${FROM} to ${TO}"
     case $FROM in
         ftp*|http*|tftp*)
             n=0
@@ -33,6 +34,7 @@ get_url()
 
 cleanup2()
 {
+    echo "[RUN] cleanup2"
     if [ -n "${TARGET}" ]; then
         umount ${TARGET}/boot/efi || true
         umount ${TARGET} || true
@@ -53,7 +55,7 @@ usage()
 {
     echo "Usage: $PROG [--force-efi] [--debug] [--tty TTY] [--poweroff] [--takeover] [--no-format] [--config https://.../config.yaml] DEVICE ISO_URL"
     echo ""
-    echo "Example: $PROG /dev/vda https://github.com/rancher/k3os/releases/download/v0.8.0/k3os.iso"
+    echo "Example: $PROG /dev/vda https://github.com/grengojbo/k3os/releases/download/v0.8.0/k3os.iso"
     echo ""
     echo "DEVICE must be the disk that will be partitioned (/dev/vda). If you are using --no-format it should be the device of the K3OS_STATE partition (/dev/vda2)"
     echo ""
@@ -65,6 +67,7 @@ usage()
 
 do_format()
 {
+    echo "[RUN] do_format"
     if [ "$K3OS_INSTALL_NO_FORMAT" = "true" ]; then
         STATE=$(blkid -L K3OS_STATE || true)
         if [ -z "$STATE" ] && [ -n "$DEVICE" ]; then
@@ -119,6 +122,7 @@ do_mount()
     mkdir -p ${TARGET}
     mount ${STATE} ${TARGET}
     mkdir -p ${TARGET}/boot
+    echo "[RUN] do_mount"
     if [ -n "${BOOT}" ]; then
         mkdir -p ${TARGET}/boot/efi
         mount ${BOOT} ${TARGET}/boot/efi
@@ -130,6 +134,7 @@ do_mount()
 
 do_copy()
 {
+    echo "[RUN] do_copy"
     tar cf - -C ${DISTRO} k3os | tar xvf - -C ${TARGET}
     if [ -n "$STATE_NUM" ]; then
         echo $DEVICE $STATE_NUM > $TARGET/k3os/system/growpart
@@ -151,10 +156,14 @@ do_copy()
 
 install_grub()
 {
+    echo "[RUN] install_grub"
+    local GRUB_ADD_LINE=""
+    # local GRUB_ADD_LINE="swapaccount=1"
     if [ "$K3OS_INSTALL_DEBUG" ]; then
         GRUB_DEBUG="k3os.debug"
-    else
-        GRUB_DEBUG="ipv6.disable=1 swapaccount=1"
+    fi
+    if [ "$K3OS_INSTALL_DISABLE_IPV6" ]; then
+        GRUB_ADD_LINE="${GRUB_ADD_LINE} ipv6.disable=1"
     fi
 
     mkdir -p ${TARGET}/boot/grub
@@ -172,7 +181,7 @@ menuentry "k3OS Current" {
   set sqfile=/k3os/system/kernel/current/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG $GRUB_ADD_LINE
   initrd /k3os/system/kernel/current/initrd
 }
 
@@ -181,7 +190,7 @@ menuentry "k3OS Previous" {
   set sqfile=/k3os/system/kernel/previous/kernel.squashfs
   loopback loop0 /\$sqfile
   set root=(\$root)
-  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG
+  linux (loop0)/vmlinuz printk.devkmsg=on console=tty1 $GRUB_DEBUG $GRUB_ADD_LINE
   initrd /k3os/system/kernel/previous/initrd
 }
 
@@ -225,6 +234,7 @@ EOF
 
 get_iso()
 {
+    echo "[RUN] get_iso"
     ISO_DEVICE=$(blkid -L K3OS || true)
     if [ -z "${ISO_DEVICE}" ]; then
         for i in $(lsblk -o NAME,TYPE -n | grep -w disk | awk '{print $1}'); do
@@ -252,6 +262,7 @@ get_iso()
 
 setup_style()
 {
+    echo "[RUN] setup_style"
     if [ "$K3OS_INSTALL_FORCE_EFI" = "true" ] || [ -e /sys/firmware/efi ]; then
         PARTTABLE=gpt
         BOOTFLAG=esp
@@ -266,6 +277,7 @@ setup_style()
 
 validate_progs()
 {
+    echo "[RUN] validate_progs"
     for i in $PROGS; do
         if [ ! -x "$(which $i)" ]; then
             MISSING="${MISSING} $i"
@@ -281,6 +293,7 @@ validate_progs()
 validate_device()
 {
     DEVICE=$K3OS_INSTALL_DEVICE
+    echo "[RUN] validate_device ${DEVICE}"
     if [ ! -b ${DEVICE} ]; then
         echo "You should use an available device. Device ${DEVICE} does not exist."
         exit 1
@@ -370,8 +383,15 @@ if [ -n "$INTERACTIVE" ]; then
     exit 0
 fi
 
+if [ "$K3OS_INSTALL_DISABLE_IPV6" = true ] || grep -q 'k3os.install.disable_ipv6=true' /proc/cmdline; then
+    echo "--- Disable ipv6..."
+    rm -f /etc/sysctl.d/01-ipv6.conf
+fi
+
 if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true' /proc/cmdline; then
     poweroff -f
+elif [ "${K3OS_INSTALL_NO_REBOOT}" == true ] || grep -q 'k3os.install.no_reboot=true' /proc/cmdline; then
+    echo "Install successful"
 else
     echo " * Rebooting system in 5 seconds (CTRL+C to cancel)"
     sleep 5

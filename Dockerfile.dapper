@@ -3,7 +3,7 @@ FROM golang:1.13-alpine
 ARG DAPPER_HOST_ARCH
 ENV ARCH $DAPPER_HOST_ARCH
 
-RUN apk -U add bash git gcc musl-dev docker vim less file curl wget ca-certificates
+RUN apk -U add bash git gcc musl-dev docker vim less file curl wget ca-certificates qemu
 RUN go get -d golang.org/x/lint/golint && \
     git -C /go/src/golang.org/x/lint/golint checkout -b current 06c8688daad7faa9da5a0c2f163a3d14aac986ca && \
     go install golang.org/x/lint/golint && \
@@ -17,7 +17,10 @@ RUN go get -d github.com/rancher/trash && \
     go install github.com/rancher/trash && \
     rm -rf /go/src /go/pkg
 
-ENV DAPPER_ENV REPO TAG DRONE_TAG
+########## Dapper Configuration #####################
+
+# ENV DAPPER_ENV VERSION DEV_BUILD 
+ENV DAPPER_ENV REPO TAG DRONE_TAG ENABLE_QEMU CUSTOM_PACKAGES ENABLE_VAULT ENABLE_SELINUX DISABLE_MDADM DISABLE_ISCSI DISABLE_LVM
 ENV DAPPER_SOURCE /go/src/github.com/rancher/k3os/
 ENV DAPPER_OUTPUT ./build ./dist
 ENV DAPPER_DOCKER_SOCKET true
@@ -26,9 +29,5 @@ ENV HOME ${DAPPER_SOURCE}
 WORKDIR ${DAPPER_SOURCE}
 ENV GO111MODULE off
 
-ARG ENABLE_VAULT
-ENV ENABLE_VAULT=${ENABLE_VAULT}
-ARG CUSTOM_PACKAGES
-ENV CUSTOM_PACKAGES ${CUSTOM_PACKAGES}
 ENTRYPOINT ["./scripts/entry"]
 CMD ["ci"]

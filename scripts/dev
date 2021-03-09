@@ -1,0 +1,25 @@
+#!/bin/bash
+# no-help: For development, creates iso, kernel, initrd gzip compressed
+set -e
+
+cd $(dirname $0)
+# CURRENT_DIR=`pwd`
+
+# echo "Current DIR: ${CURRENT_DIR}"
+if [ "${CUSTOM_PACKAGES}" != "" ]; then 
+  echo "[ADD] packages: ${CUSTOM_PACKAGES}..."
+fi
+if [ "${ENABLE_QEMU}" == "yes" ]; then 
+  echo "[ADD] qemu-guest-agent..."
+elif [ "${ENABLE_VAULT}" == "yes" ]; then 
+  echo "[ADD] vault..."
+else
+  echo "[NO add] qemu-guest-agent"
+fi
+# echo ------------------------ ./build
+# ./build
+# # echo ------------------------ ./prepare
+# # ./prepare
+# echo ------------------------ ./package
+# # ROOTFS=0 ./package
+# ./package

@@ -1,6 +1,5 @@
-ssh_authorized_keys:
+# ssh_authorized_keys:
 # - ssh-rsa AAAAB3NzaC1yc2EAAAADAQAB...
-- github:grengojbo
 write_files:
 # - encoding: ""
 #   content: |-
@@ -17,16 +16,6 @@ write_files:
     FallbackNameservers=8.8.8.8
   owner: root
   path: /etc/connman/main.conf
-  permissions: '0644'
-- encoding: ""
-  content: |-
-    . /etc/profile.d/bash_completion.sh
-    # kubectl completion bash >/etc/bash_completion.d/kubectl
-    source <(kubectl completion bash)
-    alias k=kubectl
-    complete -F __start_kubectl k
-  owner: rancher
-  path: /home/rancher/.bash_profile
   permissions: '0644'
 - encoding: ""
   content: |-
@@ -74,6 +63,7 @@ init_cmd:
 - "echo hello, init command"
 boot_cmd:
 - "echo hello, boot command"
+- "rm -f /var/lib/rancher/k3s/data/*/bin/fsck"
 #- /usr/bin/growpart /dev/sda 1
 #- /usr/sbin/resize2fs /dev/sda1
 #- mkdir -p /var/lib/longhorn
@@ -111,11 +101,13 @@ k3os:
   #   passphrase: mypassword
   # - name: nothome
   #   passphrase: somethingelse
-  # password: rancher
-  # server_url: https://someserver:6443
-  # token: TOKEN
-  # labels:
-  #   somekey: somevalue
+  password: rancher
+  server_url: https://someserver:6443
+  token: TOKEN
+  labels:
+    region: hz-server-2
+    "node-role.kubernetes.io/worker": ""
+    # somekey: somevalue
   k3s_args:
   - agent
   - "--node-name=$(hostname -f)"

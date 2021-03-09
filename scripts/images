@@ -28,10 +28,21 @@ build_all()
         if [ -e root ]; then
             ROOT=$(readlink -f root)
         fi
-        echo "---------------------------------- Start ${FULL_IMAGE} ----------------------------------"
-        docker build --build-arg TAG=$TAG --build-arg VERSION=${VERSION} --build-arg REPO=${REPO} --build-arg ARCH=${ARCH} -f $(pwd)/Dockerfile -t $FULL_IMAGE $ROOT
+        echo "---------------------------------- Start ${i}"
+        docker build --build-arg TAG=$TAG \
+            --build-arg VERSION=${VERSION} \
+            --build-arg REPO=${REPO} \
+            --build-arg ARCH=${ARCH} \
+            --build-arg ENABLE_QEMU=${ENABLE_QEMU} \
+            --build-arg CUSTOM_PACKAGES=${CUSTOM_PACKAGES} \
+            --build-arg ENABLE_VAULT=${ENABLE_VAULT} \
+            --build-arg ENABLE_SELINUX=${ENABLE_SELINUX} \
+            --build-arg DISABLE_MDADM=${DISABLE_MDADM} \
+            --build-arg DISABLE_LVM=${DISABLE_LVM} \
+            --build-arg DISABLE_ISCSI=${DISABLE_ISCSI} \
+            -f $(pwd)/Dockerfile -t $FULL_IMAGE $ROOT
         cd ..
-        echo "---------------------------------- Finish ${FULL_IMAGE} ----------------------------------"
+        echo "----------------------------------"
     done
 }
 

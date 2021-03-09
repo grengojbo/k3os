@@ -9,6 +9,8 @@ cd $(dirname $0)/..
 DIST=$(pwd)/dist/artifacts
 
 pushd images/output
+echo "[Start:package] build_all..."
+echo "============================"
 build_all "$@"
 mkdir -p ${DIST}
 copy_all ${DIST} "$@"
@@ -19,11 +21,14 @@ ID=$(docker create ${REPO}/k3os-package:${TAG})
 docker cp ${ID}:/output/k3os ./build/
 docker rm -fv $ID
 
+echo "[Build] ${REPO}/k3os:${TAG}"
+echo "----------------------------------"
 docker build \
   --build-arg ARCH=${ARCH} \
   --build-arg REPO=${REPO} \
   --build-arg TAG=${TAG} \
   --build-arg VERSION=${VERSION} \
+  --build-arg ENABLE_QEMU=${ENABLE_QEMU} \
   --file package/Dockerfile \
   --tag ${REPO}/k3os:${TAG} \
   --tag ${REPO}/k3os:latest \
@@ -31,5 +36,7 @@ docker build \
 docker image save --output ./dist/images.tar \
   ${REPO}/k3os:${TAG} \
   ${REPO}/k3os:latest
+echo "----------------------------------"
 echo ${REPO}/k3os:${TAG} > ./dist/images.txt
 echo Built ${REPO}/k3os:${TAG}
+echo "----------------------------------"

@@ -17,8 +17,9 @@ RUN apt-get --assume-yes update \
  && echo 'nls_iso8859_1' >> /etc/initramfs-tools/modules
 
 ARG ARCH
-ENV KVERSION=5.4.0-54-generic
-ENV URL=https://github.com/rancher/k3os-kernel/releases/download/5.4.0-54.60-rancher1
+ENV KVERSION=5.4.0-65-generic
+ENV K3S_KVERSION=5.4.0-65.73-k3os
+ENV URL=https://github.com/grengojbo/k3os-kernel/releases/download/${K3S_KVERSION}
 ENV KERNEL_XZ=${URL}/kernel-generic_${ARCH}.tar.xz
 ENV KERNEL_EXTRA_XZ=${URL}/kernel-extra-generic_${ARCH}.tar.xz
 ENV KERNEL_HEADERS_XZ=${URL}/kernel-headers-generic_${ARCH}.tar.xz
