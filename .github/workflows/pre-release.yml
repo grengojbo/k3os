@@ -15,6 +15,14 @@ jobs:
     env:
       DOCKER_CLI_EXPERIMENTAL: "enabled"
       TERM: "xterm-256color"
+      CUSTOM_PACKAGES: mc
+      #CUSTOM_PACKAGES: "neovim,mc"
+      ENABLE_SELINUX: yes
+      ENABLE_VAULT: yes
+      ENABLE_QEMU: yes
+      DISABLE_MDADM: yes
+      DISABLE_LVM: yes
+      DISABLE_ISCSI: yes
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,6 +39,8 @@ jobs:
       - name: Build Release
         if: success() && startsWith(github.ref, 'refs/tags/v')
         run: |
+          pwd  
+          echo "-------------------------------"
           make
         #  lsb_release -a
         #  mkdir -p ./dist
@@ -46,6 +56,10 @@ jobs:
       - name: Finish free space
         run: |
           sudo df -h
+      - name: Docker System df
+        run: |
+          docker system df
+
       - name: Print env
         run: |
           echo "BRANCH=$BRANCH DT=$DT"

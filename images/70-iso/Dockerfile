@@ -14,7 +14,7 @@ RUN if [ "$ARCH" == "amd64" ]; then \
         apk add qemu-system-aarch64 \
     ;fi
 RUN ln -s /usr/bin/qemu-system-* /usr/bin/qemu-system
-RUN qemu-img create -f qcow2 /hd.img 8G
+RUN qemu-img create -f qcow2 /hd.img 2G
 COPY run-kvm.sh /usr/bin/
 COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 
