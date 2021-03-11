@@ -1,0 +1,126 @@
+---
+name: "pre-release"
+
+on:
+  push:
+    # branches:
+    #   - "main"
+    # tags-ignore:
+    tags:
+      - 'v*-rc*'
+
+jobs:
+  build_dapper:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_CLI_EXPERIMENTAL: "enabled"
+      TERM: "xterm-256color"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Build Release
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          make
+        #  lsb_release -a
+        #  mkdir -p ./dist
+      #    # sudo apt update
+      #    # sudo apt install ccache libssl-dev u-boot-tools python-mako debhelper fakeroot gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu make device-tree-compiler
+      - name: Setup env
+        run: |
+          echo "DT=$(date +'%Y-%m-%d_%H%M')" >> ./dist/dt.txt
+          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
+        #  echo "KERNELVER=$(make kernelversion)" >> $GITHUB_ENV
+
+      - name: Print env
+        run: |
+          echo "BRANCH=$BRANCH DT=$DT"
+
+      - run: "docker version"
+      - run: "docker run --rm hello-world"
+      
+      - name: Cache node modules
+        uses: "actions/cache@v2"
+        with:
+          path: ~/dist
+          # key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-dist
+          restore-keys: |
+            ${{ runner.os }}-dist
+            ${{ runner.os }}-dist-
+          #   ${{ runner.os }}-node-
+      
+      # - uses: rlespinasse/github-slug-action@v2.x
+      # - name: Generate Release Channel # Release Channels are named prod-<Major Release>, i.e. prod-1, prod-3
+      #   id: releaseChannel
+      #   run: |
+      #     RELEASE_CHANNEL=$(echo ${{ env.GITHUB_REF_SLUG }} | sed -r 's/\.[0-9]+\.[0-9]+$//')
+      #     echo "::set-output name=releaseChannel::$RELEASE_CHANNEL"
+      # - name: Install Packages
+      #   run: npm install
+      # - name: Get Latest Binary Version # Binary Version will be x.x.x based on the latest tag
+      #   id: latestBinaryVersion
+      #   run: |
+      #     # Release tag finds the lastest tag in the tree branch - i.e. prod-x.x.x
+      #     RELEASE_TAG=$(echo $(git describe --tags --abbrev=0))
+      #     # Using param substitution, we output x.x.x instead
+      #     echo "::set-output name=version::${RELEASE_TAG#*-}"
+      # - name: Echo Version Details
+      #   run: |
+      #     echo Build number is $GITHUB_RUN_NUMBER
+      #     echo Latest release is ${{ steps.latestBinaryVersion.outputs.version }}
+
+      - uses: rlespinasse/github-slug-action@v2.x
+      - name: Generate Changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v0.4.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+          base-ref: 'v1'
+      - name: Creating Release
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "LICENSE,*.md,dist/artifacts/*"
+          body: |
+            Changes in this Release: ${{ env.GITHUB_REF_SLUG }}
+            ${{ steps.changelog.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # name: Release ${{ env.GITHUB_REF_SLUG }}
+          allowUpdates: true
+          prerelease: true
+          # tag: latest
+
+      # - uses: "./packages/automatic-releases/"
+      #   with:
+      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     automatic_release_tag: "latest"
+      #     prerelease: true
+      #     title: "Development Build"
+      #     files: |
+      #       packages/automatic-releases/dist/index.js
+      #       packages/keybase-notifications/dist/index.js
+      #   id: "automatic_releases"
+
+      # # marvinpinto/action-keybase-notifications
+      # # marvinpinto/action-automatic-releases
+      # # marvinpinto/action-inject-ssm-secrets
+      # - name: "Automatically mirror release artifacts"
+      #   env:
+      #     GITHUB_SUPER_TOKEN: ${{ secrets.GITHUB_SUPER_TOKEN }}
+      #   run: |
+      #     ./scripts/mirror-actions.sh "$AUTOMATIC_RELEASES_TAG"
+
+      # - uses: "./packages/keybase-notifications"
+      #   if: always()
+      #   with:
+      #     job_status: ${{ job.status }}
+      #     opensentinel_token: ${{ secrets.OSL_TOKEN }}
