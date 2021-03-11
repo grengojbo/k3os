@@ -19,12 +19,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+          fetch-depth: 1
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
       
+      - name: Start free space
+        run: |
+          sudo df -h
       - name: Build Release
         if: success() && startsWith(github.ref, 'refs/tags/v')
         run: |
@@ -40,23 +43,23 @@ jobs:
           echo "DT=$(date +'%Y-%m-%d_%H%M')" >> $GITHUB_ENV
         #  echo "KERNELVER=$(make kernelversion)" >> $GITHUB_ENV
 
+      - name: Finish free space
+        run: |
+          sudo df -h
       - name: Print env
         run: |
           echo "BRANCH=$BRANCH DT=$DT"
 
-      - run: "docker version"
-      - run: "docker run --rm hello-world"
-      
-      - name: Cache node modules
-        uses: "actions/cache@v2"
-        with:
-          path: ~/dist
-          # key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          key: ${{ runner.os }}-dist
-          restore-keys: |
-            ${{ runner.os }}-dist
-            ${{ runner.os }}-dist-
-          #   ${{ runner.os }}-node-
+      # - name: Cache node modules
+      #   uses: "actions/cache@v2"
+      #   with:
+      #     path: ~/dist
+      #     # key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     key: ${{ runner.os }}-dist
+      #     restore-keys: |
+      #       ${{ runner.os }}-dist
+      #       ${{ runner.os }}-dist-
+      #     #   ${{ runner.os }}-node-
       
       # - uses: rlespinasse/github-slug-action@v2.x
       # - name: Generate Release Channel # Release Channels are named prod-<Major Release>, i.e. prod-1, prod-3
@@ -78,21 +81,21 @@ jobs:
       #     echo Build number is $GITHUB_RUN_NUMBER
       #     echo Latest release is ${{ steps.latestBinaryVersion.outputs.version }}
 
-      - uses: rlespinasse/github-slug-action@v2.x
-      - name: Generate Changelog
-        id: changelog
-        uses: metcalfc/changelog-generator@v0.4.0
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-          base-ref: 'v1'
+      # - uses: rlespinasse/github-slug-action@v2.x
+      # - name: Generate Changelog
+      #   id: changelog
+      #   uses: metcalfc/changelog-generator@v0.4.0
+      #   with:
+      #     myToken: ${{ secrets.GITHUB_TOKEN }}
+      #     base-ref: 'v1'
       - name: Creating Release
         if: success() && startsWith(github.ref, 'refs/tags/v')
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "LICENSE,*.md,dist/artifacts/*"
+          artifacts: "dist/artifacts/*"
           body: |
             Changes in this Release: ${{ env.GITHUB_REF_SLUG }}
-            ${{ steps.changelog.outputs.changelog }}
+          #  ${{ steps.changelog.outputs.changelog }}
           token: ${{ secrets.GITHUB_TOKEN }}
           # name: Release ${{ env.GITHUB_REF_SLUG }}
           allowUpdates: true

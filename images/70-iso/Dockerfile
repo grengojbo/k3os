@@ -14,16 +14,16 @@ RUN if [ "$ARCH" == "amd64" ]; then \
         apk add qemu-system-aarch64 \
     ;fi
 RUN ln -s /usr/bin/qemu-system-* /usr/bin/qemu-system
-RUN qemu-img create -f qcow2 /hd.img 40G
+RUN qemu-img create -f qcow2 /hd.img 8G
 COPY run-kvm.sh /usr/bin/
 COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 
 COPY --from=package /output/ /usr/src/iso/
 
 COPY config.yaml /usr/src/iso/k3os/system/
-RUN mkdir -p /output && \
-    grub-mkrescue -o /output/k3os.iso /usr/src/iso/. -- -volid K3OS -joliet on && \
-    [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
+# RUN mkdir -p /output && \
+#     grub-mkrescue -o /output/k3os.iso /usr/src/iso/. -- -volid K3OS -joliet on && \
+#     [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
 
 RUN rm -f /usr/src/iso/k3os/system/kernel/current/kernel.squashfs
 COPY --from=package /output-vm/kernel.vm.squashfs /usr/src/iso/k3os/system/kernel/current/kernel.squashfs
